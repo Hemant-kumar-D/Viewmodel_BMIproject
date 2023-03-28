@@ -26,6 +26,7 @@ android {
 
     buildFeatures{
         viewBinding = true
+        dataBinding=true
     }
 
     compileOptions {
@@ -38,6 +39,13 @@ android {
 }
 
 dependencies {
+    def lifecycle_version = "2.6.1"
+
+    // ViewModel
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+
+    // LiveData
+    implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'

@@ -19,6 +19,9 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import com.example.bmiclaculatermui.View_model.ViewmodelMainActivity
 import com.example.bmiclaculatermui.databinding.ActivityMainBinding
 import kotlin.math.round
 
@@ -27,25 +30,23 @@ import kotlin.math.round
 class MainActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityMainBinding
     private var isclear: Boolean = false
-
+    private lateinit var viewmodel:ViewmodelMainActivity
     override fun onCreate(savedInstanceState: Bundle?) {
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        viewmodel=ViewModelProvider(this)[(ViewmodelMainActivity::class.java)]
+        viewmodel.value01.observe(this, Observer {
+            binding.textview1.text=it.toString()
+        })
+        viewmodel.text.observe(this, Observer {
+            binding.textview2.text=it.toString()
+        })
 
         binding.calculate.setOnClickListener(this)
-
-        if (isclear) {
-            isclear = false
-            binding.calculate.setText("calculate")
-            binding.weight.isEnabled=true
-            binding.hight.isEnabled=true
-        }
     }
-
-
     override fun onClick(View: View?) {
+
         when (View?.id) {
             R.id.calculate -> {
                 if (binding.hight.editableText.isEmpty() && binding.weight.editableText.isEmpty()) {
@@ -64,53 +65,23 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     binding.calculate.text = "calculate"
                     binding.textview1.setText("")
                     binding.textview2.setText("")
-
                     binding.weight.isEnabled=true
                     binding.hight.isEnabled=true
-
                     binding.hight.editableText.clear()
                     binding.weight.editableText.clear()
 
                     Toast.makeText(this, "clear now", Toast.LENGTH_SHORT).show()
-                } else if (binding.hight.editableText.toString()
+                }
+                else if (binding.hight.editableText.toString()
                         .isNotEmpty() && binding.weight.editableText.toString().isNotEmpty()
                 ) {
                     if (!isclear) {
-                        // inislize the variable
                         isclear = true
                         binding.calculate.setText("clear")
-
                         binding.weight.isEnabled=false
                         binding.hight.isEnabled=false
-
-
-                        val hi = (binding.hight.editableText.toString().toDouble())
-                        val wi = (binding.weight.editableText.toString().toDouble())
-
-
-                        if (hi == 0.0 || wi == 0.0) {
-                            Toast.makeText(this, "Invalid value", Toast.LENGTH_SHORT).show()
-                        } else {
-                            val hieght = hi.toFloat() / 100
-                            val BMI = wi.toFloat() / (hieght * hieght)
-
-                            val total = (round(BMI * 100) / 100.0)
-
-                            binding.textview1.text =
-                                "your BMI value= ${total}"// this is the bmi value
-
-                            if (total < 18) {
-                                binding.textview2.text = "you are under weight"
-                            } else if (total >= 18 && total < 25) {
-                                binding.textview2.text = "you are healthy"
-                            } else if (total > 25) {
-                                binding.textview2.text = "you are over weight"
-                            }
-
-
-                        }
-
-
+                        viewmodel.calculatebmi(binding.hight.editableText.toString().toDouble(),
+                            binding.weight.editableText.toString().toInt())
                     }
                 }
 
