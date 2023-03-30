@@ -1,47 +1,52 @@
 package com.example.bmiclaculatermui
 
-import android.app.Activity
+
 import android.app.AlertDialog
-import android.app.ProgressDialog
-import android.content.Context
+
+
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Resources
+
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.ProgressBar
+
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
+
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.bmiclaculatermui.View_model.ViewmodelMainActivity
+
 import com.example.bmiclaculatermui.databinding.ActivityMainBinding
-import kotlin.math.round
+
 
 
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityMainBinding
     private var isclear: Boolean = false
-    private lateinit var viewmodel:ViewmodelMainActivity
+    private lateinit var viewmodel:ViewModelActivity
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityMainBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        viewmodel=ViewModelProvider(this)[(ViewmodelMainActivity::class.java)]
+        viewmodel =ViewModelProvider(this)[(ViewModelActivity::class.java)]
         viewmodel.value01.observe(this, Observer {
             binding.textview1.text=it.toString()
         })
         viewmodel.text.observe(this, Observer {
             binding.textview2.text=it.toString()
         })
+        viewmodel.message.observe(this, Observer {
+            Toast.makeText(this, "$it", Toast.LENGTH_SHORT).show()
+        })
+
 
         binding.calculate.setOnClickListener(this)
     }
@@ -49,43 +54,46 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         when (View?.id) {
             R.id.calculate -> {
-                if (binding.hight.editableText.isEmpty() && binding.weight.editableText.isEmpty()) {
-                    binding.hight.requestFocus()
-                    Toast.makeText(this, "please Enter weight and height", Toast.LENGTH_SHORT)
-                        .show()
-                } else if (binding.hight.editableText.isEmpty()) {
-                    Toast.makeText(this, "please enter the hieght", Toast.LENGTH_SHORT).show()
-                } else if (binding.weight.editableText.isEmpty()) {
-                    binding.weight.requestFocus()
-                    Toast.makeText(this, "please Enter the weight", Toast.LENGTH_SHORT).show()
-                }
+//                if (binding.hight.editableText.isEmpty() && binding.weight.editableText.isEmpty()) {
+//                    binding.hight.requestFocus()
+//                    Toast.makeText(this, "please Enter weight and height", Toast.LENGTH_SHORT)
+//                        .show()
+//                } else if (binding.hight.editableText.isEmpty()) {
+//                    Toast.makeText(this, "please enter the hieght", Toast.LENGTH_SHORT).show()
+//                } else if (binding.weight.editableText.isEmpty()) {
+//                    binding.weight.requestFocus()
+//                    Toast.makeText(this, "please Enter the weight", Toast.LENGTH_SHORT).show()
+//                }
 
                 if (isclear) {
                     isclear = false
                     binding.calculate.text = "calculate"
                     binding.textview1.setText("")
                     binding.textview2.setText("")
-                    binding.weight.isEnabled=true
-                    binding.hight.isEnabled=true
+                    binding.weight.isEnabled = true
+                    binding.hight.isEnabled = true
                     binding.hight.editableText.clear()
                     binding.weight.editableText.clear()
 
                     Toast.makeText(this, "clear now", Toast.LENGTH_SHORT).show()
                 }
-                else if (binding.hight.editableText.toString()
-                        .isNotEmpty() && binding.weight.editableText.toString().isNotEmpty()
-                ) {
-                    if (!isclear) {
-                        isclear = true
-                        binding.calculate.setText("clear")
-                        binding.weight.isEnabled=false
-                        binding.hight.isEnabled=false
-                        viewmodel.calculatebmi(binding.hight.editableText.toString().toDouble(),
-                            binding.weight.editableText.toString().toInt())
-                    }
-                }
+//
+                else {
+                    if (binding.hight.text!!.isNotEmpty() && binding.weight.text!!.isNotEmpty()) {
+                        if (!isclear) {
+                            isclear = true
+                            binding.calculate.setText("clear")
+                            binding.weight.isEnabled = false
+                            binding.hight.isEnabled = false
 
+
+                        }
+                    }
+                    viewmodel.calculatebmi()
+
+                }
             }
+
 
         }
 

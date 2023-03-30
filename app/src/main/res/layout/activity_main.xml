@@ -5,6 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <variable
+            name="MyData"
+            type="com.example.bmiclaculatermui.ViewModelActivity" />
 
     </data>
 
@@ -37,6 +40,8 @@
                 android:id="@+id/hight"
                 android:layout_width="match_parent"
                 android:layout_height="54dp"
+                  android:text="@={MyData.baseObservable.height}"
+
 
                 android:inputType="number"
                 android:maxLength="4" />
@@ -68,6 +73,9 @@
                 android:id="@+id/weight"
                 android:layout_width="match_parent"
                 android:layout_height="54dp"
+                android:text="@={MyData.baseObservable.weight}"
+
+
                 android:inputType="number"
                 android:maxLength="4" />
 
